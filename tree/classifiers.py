@@ -8,19 +8,28 @@ import numpy as np
 class DecisionTreeClassifier():
 	"""
 	Decision Tree Classifier
-
+	
+	Parameters
+	----------
+	max_depth : integer (Default 'inf'), maximum depth allowed in the decision tree
+	
+	min_samples_split : integer (Default 2), minimum nodes to consider before splitting
+	
+	n_classes : integer (Default None), if None find out from training dataset labels
+	
 	Attributes
 	----------
 	tree_ : dict, dictionary representation of tree
+	
 	depth_ : integer, current maximum depth of tree
-
+	
 	"""
-	def __init__(self):
+	def __init__(self, max_depth=None, min_samples_split=2, n_classes=None):
 		self.__root = None
-		self.__max_depth = 0
-		self.__X = None
-		self.__y = None
-		self.__n_classes = None
+		self.__max_depth = float('inf') if max_depth==None else max_depth
+		self.__min_samples_split = min_samples_split
+		self.__n_classes = n_classes
+		self.__depth = 0
 
 	def __gini_index(self,groups, y):
 		n_instances = len(groups[0])+len(groups[1])  # count of all samples
@@ -36,7 +45,7 @@ class DecisionTreeClassifier():
 			# weight the group score by its relative size
 			gini +=  (1-score) * (size / n_instances)
 		return gini
-	
+
 	def __get_split(self,X,y):
 		b_index, b_value, b_score, b_groups = float('inf'), float('inf'), float('inf'), None
 		for col_ind in range(X.shape[1]): #for each features
@@ -58,11 +67,11 @@ class DecisionTreeClassifier():
 		# Create a terminal node value
 		cls,cnt = np.unique(classes,return_counts=True)
 		probs = np.zeros(self.__n_classes)
-		for cl,cn in zip(cls,cnt): probs[cl] = cn/sum(cnt)
+		for cl,cn in zip(cls,cnt): probs[int(cl)]= cn/sum(cnt)
 		return cls[np.argmax(cnt)], probs
 
-	def __split(self, node, X, y, max_depth, min_samples_split, depth):
-		self.__max_depth = max(depth,self.__max_depth)
+	def __split(self, node, X, y, depth):
+		self.__depth = max(depth, self.__depth)
 		left, right = node.pop('groups')
 		# check for a no split
 		if len(left)==0 or len(right)==0:
@@ -70,68 +79,67 @@ class DecisionTreeClassifier():
 			return
 
 		# check for max depth
-		if depth >= max_depth:
+		if depth >= self.__max_depth:
 			node['left'], node['right'] = self.__to_terminal(y[left]), self.__to_terminal(y[right])
 			return
 
 		# process left child
-		if len(left) <= min_samples_split:
+		if len(left) <= self.__min_samples_split:
 			node['left'] = self.__to_terminal(y[left])
 		else:
 			node['left'] = self.__get_split(X[left],y[left])
-			self.__split(node['left'], X[left], y[left], max_depth, min_samples_split, depth+1)
+			self.__split(node['left'], X[left], y[left], depth+1)
 		# process right child
-		if len(right) <= min_samples_split:
+		if len(right) <= self.__min_samples_split:
 			node['right'] = self.__to_terminal(y[right])
 		else:
 			node['right'] = self.__get_split(X[right],y[right])
-			self.__split(node['right'],X[right],y[right], max_depth, min_samples_split, depth+1)
+			self.__split(node['right'],X[right],y[right], depth+1)
 
-	def fit(self,X,y, max_depth=None, min_samples_split=2):
+	def fit(self,X,y):
 		"""
 		Fit X using y by optimizing splits costs using gini index
-
+		
 		Parameters
 		----------
 		X : 2D numpy array, independent variables
-		y : 1D numpy array, dependent variable
-		max_depth : integer (Default 'inf'), maximum depth allowed in the decision tree
-		min_samples_split : integer (Default 2), minimum nodes to consider before splitting
 		
+		y : 1D numpy array, dependent variable
+
 		"""
-		self.__X, self.__y, max_depth = X, y, float('inf') if max_depth==None else max_depth
-		self.__n_classes = len(np.unique(y))
+		self.__n_classes = len(np.unique(y)) if self.__n_classes==None else self.__n_classes
 		self.__root = self.__get_split(X,y)
-		self.__split(self.__root, X, y, max_depth, min_samples_split,1)
+		self.__split(self.__root, X, y, 1)
 
 	def predict(self,rows):
 		"""
 		Predict dependent variable
-
+		
 		Parameters
 		---------
 		X : numpy array, independent variables
-
+		
 		Returns
 		-------
-		predicted classes    
-
+		predicted labels    
+		
 		"""
 		return np.array([ self.__predict_row(row,self.__root)[0] for row in rows ])
 
-	def predict_proba(self,rows):
+	def predict_proba(self,X):
 		"""
 		Predict probability of all classes
-
+	
 		Parameters
+		----------
 		X : numpy array, independent variables
-
-		returns
+	   
+		Returns
 		-------
-		predicted probabilities
-
+		probability of each class [ n_samples, n_classes ]
+		
 		"""
-		return np.array([ self.__predict_row(row,self.__root)[1] for row in rows ])
+		return np.array([ self.__predict_row(row,self.__root)[1] for row in X ])
 
 	def __predict_row(self,row,node):
 		if row[node['index']] < node['value']:
@@ -144,21 +152,22 @@ class DecisionTreeClassifier():
 	def score(self,X,y): 
 		"""
 		Calculate accuracy from independent variables
-
+		
 		Parameters
 		----------
 		X : numpy array, independent variables
+		
 		y : numpy array, dependent variable
-
+		
 		Returns
 		-------
 		accuracy score
-
+		
 		"""
 		return (y==self.predict(X)).sum()/len(y)
 
 	@property 
-	def depth(self): return self.__max_depth
+	def depth(self): return self.__depth
 
 	@property 
 	def tree_(self): return self.__root

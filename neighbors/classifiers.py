@@ -6,6 +6,20 @@ Contact : https://adityajain.me
 import numpy as np 
 
 class KNeighborsClassifier():
+	"""
+	K Nearest Neighbors Classifier which classifies sample point based on majority of k nearby sample classes
+
+	Parameters
+	----------
+	n_neighbors : integer (Default 5), number of neighbors to consider
+
+	metric : str ( 'minkowski', 'euclidean', 'manhatten' ) (Default : 'minkowski')
+
+	p : integer (Default 2), metric used in minkowski distance
+
+	normalize : boolean, normalize data before calculating distance
+
+	"""
 
 	def __init__(self, n_neighbors=5, metric='minkowski', p=2, normalize=False):
 		self.__n_neighbors = n_neighbors
@@ -33,10 +47,13 @@ class KNeighborsClassifier():
 	def fit(self,X,y):
 		"""
 		Fit X using y
+		
 		Parameters
 		----------
 		X : 2D numpy array, independent variables
+		
 		y : 1D numpy array, dependent variable
+		
 		"""
 		self.__y, self.__n_classes = y, len(np.unique(y))
 		if self.__normalize:
@@ -51,10 +68,12 @@ class KNeighborsClassifier():
 		Predict probability of all classes
 
 		Parameters
+		----------
 		X : numpy array, independent variables
 
-		returns
+		Returns
 		-------
+		
 		predicted probabilities
 
 		"""
@@ -80,7 +99,7 @@ class KNeighborsClassifier():
 
 		Returns
 		-------
-		predicted classes    
+		Predicted classes    
 
 		"""
 		return np.argmax( self.predict_proba(X), axis=1 )
@@ -92,6 +111,7 @@ class KNeighborsClassifier():
 		Parameters
 		----------
 		X : numpy array, independent variables
+		
 		y : numpy array, dependent variable
 
 		Returns

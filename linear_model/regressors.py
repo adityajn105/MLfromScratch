@@ -12,11 +12,13 @@ class SGDRegressor():
 	Parameters
 	----------
 	seed : integer, random seed
+	
 	normalize : boolean, normalize X in fit method
 
 	Attributes
 	----------
 	coef_ : Estimated coefficients for the linear regression problem
+	
 	intercept_ : integer, bias for the linear regression problem
 
 	"""
@@ -55,9 +57,13 @@ class SGDRegressor():
 		Parameters
 		----------
 		X : 2D numpy array, independent variables
+		
 		y : 1D numpy array, dependent variable
+		
 		lr : float, learning rate (Default 0.01)
+		
 		tol : float, tolerance as stopping criteria for gradient descent (Default : 0.01)
+		
 		verbose : boolean, print out details while optimizing (Default : False) 
 		
 		"""
@@ -85,9 +91,9 @@ class SGDRegressor():
 		----------
 		X : numpy array, independent variables
 
-		Output
-		------
-		precicted values
+		Returns
+		-------
+		predicted values
 		
 		"""
 		if self.__normalize: X = self.__normalizeX(X)
@@ -111,10 +117,11 @@ class SGDRegressor():
 		Parameters
 		----------
 		X : 2D numpy array, independent variables
+		
 		y : numpy array, dependent variables
 
-		Output
-		------
+		Returns
+		-------
 		r2 values
 		
 		"""

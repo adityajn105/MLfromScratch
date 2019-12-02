@@ -8,23 +8,32 @@ import numpy as np
 class DecisionTreeRegressor():
 	"""
 	Decision Tree Regressor
-
+	
 	Parameters
 	----------
-	criterion : str, (mse, std, mae), criterion to be optimized for creating tree
+	criterion : ('mse', 'mae', 'std') ( Default 'mse' )
+		The function to measure the quality of a split.
+		'mse' is mean squared error
+		'mae' is mean absolute error
+		'std' is standard deviation
+   
+	max_depth : integer (Default 'inf'), maximum depth allowed in the decision tree
+	
+	min_samples_split : integer (Default 2), minimum nodes to consider before splitting
 	
 	Attributes
 	----------
 	tree_ : dict, dictionary representation of tree
+	
 	depth_ : integer, current maximum depth of tree
-
+	
 	"""
-	def __init__(self,criterion='mse'):
+	def __init__(self, criterion='mse', max_depth=None, min_samples_split=2):
 		self.__root = None
-		self.__max_depth = 0
 		self.__cost = { 'mse':self.__mse,'std':self.__std,'mae':self.__mae }[criterion]
-		self.__X = None
-		self.__y = None
+		self.__max_depth = float('inf') if max_depth==None else max_depth
+		self.__min_samples_split = min_samples_split
+		self.__depth = 0
 
 	def __std(self,y):
 		squared_error = (y-y.mean())**2
@@ -63,8 +72,8 @@ class DecisionTreeRegressor():
 
 	def __to_terminal(self,y): return y.mean()
 
-	def __split(self,node, X, y, max_depth, min_samples_split, depth):
-		self.__max_depth = max(depth,self.__max_depth)
+	def __split(self,node, X, y,  depth):
+		self.__depth = max(depth,self.__depth)
 		left, right = node.pop('groups')
 
 		# check for a no split
@@ -73,39 +82,37 @@ class DecisionTreeRegressor():
 			return
 
 		# check for max depth
-		if depth >= max_depth:
+		if depth >= self.__max_depth:
 			node['left'], node['right'] = self.__to_terminal(y[left]), self.__to_terminal(y[right])
 			return
 
 		# process left child
-		if len(left) <= min_samples_split:
+		if len(left) <= self.__min_samples_split:
 			node['left'] = self.__to_terminal(y[left])
 		else:
 			node['left'] = self.__get_split(X[left],y[left])
-			self.__split(node['left'], X[left], y[left], max_depth, min_samples_split, depth+1)
+			self.__split(node['left'], X[left], y[left], depth+1)
 
 		# process right child
-		if len(right) <= min_samples_split:
+		if len(right) <= self.__min_samples_split:
 			node['right'] = self.__to_terminal(y[right])
 		else:
 			node['right'] = self.__get_split(X[right],y[right])
-			self.__split(node['right'],X[right],y[right], max_depth, min_samples_split, depth+1)
+			self.__split(node['right'],X[right],y[right], depth+1)
 
-	def fit(self, X, y, max_depth=None, min_samples_split=2):
+	def fit(self, X, y):
 		"""
 		Fit X using y by optimizing splits costs using given criterion
-
+		
 		Parameters
 		----------
 		X : 2D numpy array, independent variables
+		
 		y : 1D numpy array, dependent variable
-		max_depth : integer (Default 'inf'), maximum depth allowed in the decision tree
-		min_samples_split : integer (Default 2), minimum nodes to consider before splitting
 		
 		"""
-		self.__X, self.__y, max_depth = X, y, float('inf') if max_depth==None else max_depth
 		self.__root = self.__get_split(X,y)
-		self.__split(self.__root, X, y, max_depth, min_samples_split,1)
+		self.__split(self.__root, X, y, 1)
 
 	def __predict_row(self,row,node):
 		if row[node['index']] < node['value']:
@@ -115,38 +122,40 @@ class DecisionTreeRegressor():
 			if isinstance(node['right'], dict): return self.__predict_row(row,node['right'])
 			else: return node['right']
 
-	def predict(self,rows): 
+	def predict(self, X): 
 		"""
 		Predict dependent variable
-		
+
 		Parameters
 		----------
 		X : numpy array, independent variables
-
-		Output
-		------
-		precicted values
+		
+		Returns
+		-------
+		predicted values
+		
 		"""
-		return np.array( [self.__predict_row(row,self.__root) for row in rows] )
+		return np.array( [self.__predict_row(row,self.__root) for row in X] )
 
 	def score(self,X,y):
 		"""
 		Computer Coefficient of Determination (rsquare)
-
+		
 		Parameters
 		----------
 		X : 2D numpy array, independent variables
+	   
 		y : numpy array, dependent variables
-
-		Output
-		------
+		
+		Returns
+		-------
 		r2 values
 		"""
 		y_pred = self.predict(X)
 		return 1-( np.sum( (y-y_pred)**2 )/np.sum( (y-y.mean())**2 ) )
 
 	@property
-	def depth_(self): return self.__max_depth
+	def depth_(self): return self.__depth
 
 	@property
 	def tree_(self): return self.__root

@@ -22,6 +22,7 @@ def adjusted_rand_score(labels_true, labels_pred):
 	----------
 
 	labels_true : numpy array,  true cluster labels
+	
 	label_pred : numpy array, predicted cluster label
 	
 	Returns

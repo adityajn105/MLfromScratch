@@ -16,7 +16,10 @@ Here I tried to keep package modules in same structure as sklearn.
 	* 	KNeighborsClassifier
 4. cluster
 	*	KMeans
-5. metrics
+5. ensemble
+	* 	RandomForestClassifier
+	* 	RandomForestRegressor
+6. metrics
 	* 	mean_squared_error
 	*	root_mean_squared_error
 	*	mean_absolute_error
@@ -31,9 +34,14 @@ Here I tried to keep package modules in same structure as sklearn.
 	*	specificity_score
 	*	f1_score
 	* 	adjusted_rand_score
-6. model_selection
+7. model_selection
 	*	train_test_split
-
+8. preprocessing
+	* 	StandardScaler
+	* 	MinMaxScaler
+	* 	RobustScaler
+	*	LabelEncoder
+	*	OneHotEncoder
 
 ## Contributors
 

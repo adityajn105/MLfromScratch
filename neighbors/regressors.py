@@ -6,7 +6,20 @@ Contact : https://adityajain.me
 import numpy as np 
 
 class KNeighborsRegressor():
+	"""
+	K Nearest Neighbor Regressor which find sample point based on majority of k nearby sample values.
 
+	Parameters
+	----------
+	n_neighbors : integer (Default 5), number of neighbors to consider
+
+	metric : str ( 'minkowski', 'euclidean', 'manhatten' ) (Default : 'minkowski')
+
+	p : integer (Default 2), metric used in minkowski distance
+
+	normalize : boolean, normalize data before calculating distance
+
+	"""
 	def __init__(self, n_neighbors=5, metric='minkowski', p=2, normalize=False):
 		self.__n_neighbors = n_neighbors
 		self.__X = None
@@ -33,10 +46,13 @@ class KNeighborsRegressor():
 	def fit(self,X,y):
 		"""
 		Fit X using y
+		
 		Parameters
 		----------
 		X : 2D numpy array, independent variables
+		
 		y : 1D numpy array, dependent variable
+		
 		"""
 		self.__y, self.__n_classes = y, len(np.unique(y))
 		if self.__normalize:
@@ -56,7 +72,7 @@ class KNeighborsRegressor():
 
 		Returns
 		-------
-		predicted classes    
+		Predicted classes    
 
 		"""
 		if self.__normalize: X = self.__normalizeX(X)
@@ -75,12 +91,12 @@ class KNeighborsRegressor():
 		Parameters
 		----------
 		X : 2D numpy array, independent variables
+		
 		y : numpy array, dependent variables
 
-		Output
-		------
+		Returns
+		-------
 		r2 values
 		
 		"""
 		return 1-(np.sum(((y-self.predict(X))**2))/np.sum((y-np.mean(y))**2))
-

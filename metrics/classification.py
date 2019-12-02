@@ -13,6 +13,7 @@ def accuracy_score(y_true,y_pred):
 	Parameters
 	----------
 	y_true : true labels
+	
 	y_pred : predicted labels
 
 	Returns
@@ -34,11 +35,13 @@ def confusion_matrix(y_true,y_pred):
 	Parameters
 	----------
 	y_true : true labels
+	
 	y_pred : predicted labels
 
 	Returns
 	-------
 	confusion matrix
+	
 	"""
 	trues,falses,pos,neg  = y_true==y_pred, y_true!=y_pred, y_true==1, y_true==0
 	tp, tn = (trues & pos).sum(), (trues & neg).sum()
@@ -49,13 +52,14 @@ def roc_curve(y_true,y_score,plot=False):
 	"""
 	Compute Receiver operating characteristic (ROC) and return fpr,tpr or plot curve
 	
-	Note: this implementation is restricted & neg).sum()
-	return np.array( [[tn,fn],[fp,tp]] )to the binary classification task.
+	Note: this implementation is restricted to the binary classification task.
 
 	Parameters
 	----------
 	y_true : true labels
+	
 	y_score : predicted probabilities
+	
 	plot: boolean (Default False), plot a matplotlib roc curve
 
 	Returns
@@ -87,6 +91,7 @@ def roc_auc_score(y_true, y_score):
 	Parameters
 	----------
 	y_true : true labels
+	
 	y_score : predicted probabilities
 
 	Returns
@@ -113,6 +118,7 @@ def precision_score(y_true,y_pred):
 	Parameters
 	----------
 	y_true : true labels
+	
 	y_pred : predicted labels
 
 	Returns
@@ -131,6 +137,7 @@ def recall_score(y_true,y_pred):
 	Parameters
 	----------
 	y_true : true labels
+	
 	y_pred : predicted labels
 
 	Returns
@@ -149,6 +156,7 @@ def sensitivity_score(y_true,y_pred):
 	Parameters
 	----------
 	y_true : true labels
+	
 	y_pred : predicted labels
 
 	Returns
@@ -167,6 +175,7 @@ def specificity_score(y_true,y_pred):
 	Parameters
 	----------
 	y_true : true labels
+	
 	y_pred : predicted labels
 
 	Returns
@@ -189,6 +198,7 @@ def f1_score(y_true,y_pred):
 	Parameters
 	----------
 	y_true : true labels
+	
 	y_score : predicted probabilities
 
 	Returns

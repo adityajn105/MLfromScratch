@@ -12,11 +12,13 @@ def root_mean_squared_error(y_true,y_pred):
 	Parameters
 	----------
 	y_pred : predicted values
+	
 	y_true : True values
 
-	Output
-	------
+	Returns
+	-------
 	rmse
+	
 	"""
 	loss = np.square(y_pred-y_true)
 	cost = np.sqrt( np.mean(loss) )
@@ -30,11 +32,13 @@ def mean_squared_error(y_true,y_pred):
 	Parameters
 	----------
 	y_pred : predicted values
+	
 	y_true : true values
 	
-	Output
-	------
+	Returns
+	-------
 	mse
+	
 	"""
 	loss = np.square(y_pred-y_true)
 	cost = np.mean(loss)
@@ -48,11 +52,13 @@ def mean_absolute_error(y_true,y_pred):
 	Parameters
 	----------
 	y_pred : predicted values
+
 	y_true : true values
 	
-	Output
-	------
+	Returns
+	-------
 	mae
+
 	"""
 	loss = abs(y_pred-y_true)
 	cost = np.mean(loss)
@@ -67,10 +73,11 @@ def r2_score(y_true,y_pred):
 	Parameters
 	----------
 	y_pred : predicted values
+	
 	y_true : true values
 
-	Output
-	------
+	Returns
+	-------
 	r2_score
 	"""
 	return 1-(np.sum((( y_true - y_pred)**2))/np.sum((y_true-np.mean(y_true))**2))

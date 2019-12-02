@@ -14,11 +14,13 @@ class SGDClassifier():
     Parameters
     ----------
     seed : integer, random seed
+    
     normalize : boolean, normalize X in fit method
 
     Attributes
     ----------
     coef_ : Estimated coefficients for the linear regression problem
+    
     intercept_ : integer, bias for the linear regression problem
 
     """
@@ -55,11 +57,17 @@ class SGDClassifier():
     def fit(self, X, y, lr=0.01, tol=0.01, verbose=False):
         """
         Fit X using y by optimizing weights and bias
-        Args:
+        
+        Parameters
+        ----------
         X : 2D numpy array, independent variables
+
         y : 1D numpy array, dependent variable
+        
         lr : float, learning rate (Default 0.01)
+        
         tol : float, tolerance as stopping criteria for gradient descent (Default : 0.01)
+        
         verbose : boolean, print out details while optimizing (Default : False) 
        
         """

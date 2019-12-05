@@ -35,7 +35,7 @@ class SGDRegressor():
 	def __initialize_weights_and_bais(self):
 		self.W = np.random.randn(self.__length) #(n,1)
 		self.b = 0
-        
+		
 	def __computeCost(self,h,Y):
 		loss = np.square(h-Y)
 		cost = np.sum(loss)/(2*self.__m)
@@ -132,3 +132,89 @@ class SGDRegressor():
 
 	@property
 	def intercept_(self): return self.b
+
+
+
+class LinearRegression():
+	"""
+	An implementation of OLS regression
+	
+	Parameters
+	----------
+	normalize : boolean, normalize data use standardscaler before fitting
+	
+	Attributes
+	----------
+	coef_ : coefficients for each of the feature
+	
+	intercept_ : y intercept 
+	
+	"""
+	def __init__(self, normalize=False):
+		self.__bias = None
+		self.__normalize = normalize
+		self.__weights = None
+		self.__std = None
+		self.__mean = None
+		
+	def __normalizeX(X):
+		return (X-self.__mean)/self.__std
+		
+	def fit(self,X,y):
+		"""
+		Fit X,y into the model
+		
+		Parameters
+		----------
+		X : numpy array, array of independent variables
+		y : numpy array, dependent variable
+		
+		"""
+		if self.__normalize:
+			self.__mean, self.__std = X.mean(axis=0), X.std(axis=0)
+			X = self.__normalizeX(X)
+		
+		#weights = (X'X)^-1 X'Y
+		self.__weights = np.dot( np.linalg.inv(np.dot(X.T, X)), np.dot( X.T, y ))
+		self.__bias = y.mean() - np.sum(b * X.mean(axis=0))
+	
+	def predict(self,X):
+		"""
+		Predict dependent variable
+
+		Parameters
+		----------
+		X : numpy array, independent variables
+
+		Returns
+		-------
+		predicted values
+
+		"""
+		if self.__normalize:
+			X = self.__normalizeX(X)
+		return np.dot(X, self.__weights )+ self.__bias
+	
+	def score(self,X,y):
+		"""
+		Computer Coefficient of Determination (rsquare)
+
+		Parameters
+		----------
+		X : 2D numpy array, independent variables
+
+		y : numpy array, dependent variables
+
+		Returns
+		-------
+		r2 values
+
+		"""
+		return 1-(np.sum(((y-self.predict(X))**2))/np.sum((y-np.mean(y))**2))
+		
+		
+	@property
+	def coef_(self): return self.__weights
+	
+	@property
+	def intercept_(self): return self.__bias

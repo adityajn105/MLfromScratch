@@ -1,4 +1,4 @@
-from .scalers import StandardScaler, MinMaxScaler, RobustScaler
+from .scaler import StandardScaler, MinMaxScaler, RobustScaler
 from .encoder import LabelEncoder, OneHotEncoder
 
 

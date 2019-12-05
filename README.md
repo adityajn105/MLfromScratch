@@ -6,6 +6,7 @@ Here I tried to keep package modules in same structure as sklearn.
 ## Package Description
 
 1. linear_model
+	* 	LinearRegression
 	*	SGDRegressor
 	*	SGDClassifier
 2. tree
@@ -14,12 +15,16 @@ Here I tried to keep package modules in same structure as sklearn.
 3. neighbors
 	*	KNeighborsRegressor
 	* 	KNeighborsClassifier
-4. cluster
+4. naive_bayes
+	* 	GaussianNB
+	*	MultinomialNB
+5. cluster
 	*	KMeans
-5. ensemble
+	* 	AgglomerativeClustering
+6. ensemble
 	* 	RandomForestClassifier
 	* 	RandomForestRegressor
-6. metrics
+7. metrics
 	* 	mean_squared_error
 	*	root_mean_squared_error
 	*	mean_absolute_error
@@ -34,9 +39,10 @@ Here I tried to keep package modules in same structure as sklearn.
 	*	specificity_score
 	*	f1_score
 	* 	adjusted_rand_score
-7. model_selection
+8. model_selection
 	*	train_test_split
-8. preprocessing
+	*	KFold
+9. preprocessing
 	* 	StandardScaler
 	* 	MinMaxScaler
 	* 	RobustScaler

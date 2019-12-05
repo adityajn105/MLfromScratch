@@ -1,7 +1,7 @@
 
 
-from .regressors import SGDRegressor
+from .regressors import SGDRegressor, LinearRegression
 from .classifiers import SGDClassifier
 
 
-__all__ = ['SGDRegressor','SGDClassifier']
+__all__ = ['LinearRegression','SGDRegressor','SGDClassifier']

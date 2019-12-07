@@ -21,6 +21,8 @@ Here I tried to keep package modules in same structure as sklearn.
 5. cluster
 	*	KMeans
 	* 	AgglomerativeClustering
+	*   DBSCAN
+	*	MeanShift
 6. ensemble
 	* 	RandomForestClassifier
 	* 	RandomForestRegressor

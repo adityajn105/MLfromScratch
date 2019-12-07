@@ -34,13 +34,17 @@ class GaussianNB():
 		"""
 		self.__summary = self.__summarize(X,y)
 		self.__total_cnt = len(y)
+
+	def __calculate_probability(self,x, mean, stdev):
+		exponent = np.exp(-((x-mean)**2 / (2 * stdev**2 )))
+		return (1 / (np.sqrt(2 * np.pi) * stdev)) * exponent
 		
 	def __predict_row(self,x):
 		probs = []
 		for means,stds,cnt in self.__summary:
 			prob = cnt/self.__total_cnt
 			for feature_index in range(len(x)):
-				prob = prob*calculate_probability( x[feature_index], means[feature_index], stds[feature_index] )
+				prob = prob*self.__calculate_probability( x[feature_index], means[feature_index], stds[feature_index] )
 			probs.append(prob)
 		return np.array(probs)/sum(probs)
 	

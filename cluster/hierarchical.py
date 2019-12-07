@@ -139,3 +139,115 @@ class AgglomerativeClustering():
 	
 	@property
 	def label_(self): return self.__labels_
+
+
+
+
+class MeanShift():
+	"""
+	Mean shift clustering is a centroid based heirarchical clustering algorithm.
+	
+	It is a centroid-based algorithm, which works by updating
+	candidates for centroids to be the mean of the points within a given
+	region. These candidates are then filtered in a post-processing stage to
+	eliminate near-duplicates to form the final set of centroids.
+	
+	Parameters
+	----------
+	bandwidth : float, integer
+		if None calculate by a heuristic defined by Aditya Jain
+	
+	Attributes
+	----------
+	labels_ : cluster labels for feature set
+	
+	cluster_centers_ : cluster centers that being used
+	
+	n_clusters_ : number of cluster found
+	"""
+	
+	def __init__(self, bandwidth=None):
+		self.__bandwidth = bandwidth
+		self.__centroids = None
+		self.__labels = None
+	
+	def __euclidean(self,X1,X2): return  np.sqrt(np.sum((X1-X2)**2, axis=1))
+	
+	def __get_new_centroids(self,X,centroids):
+		new_centroids = set()
+		for centroid in centroids:
+			new_centroids.add( tuple(X[self.__euclidean(X,centroid)<self.__bandwidth].mean(axis=0)) )
+		return new_centroids
+	
+	def __mergeCentroids(self,centroids):
+		avail = set()
+		new_centroids = list()
+		for centroid in centroids:
+			mean_centroid = centroids[self.__euclidean(centroids,centroid)<self.__bandwidth].mean(axis=0)
+			if tuple(mean_centroid) not in avail:
+				avail.add(tuple(mean_centroid))
+				new_centroids.append(mean_centroid)
+		return np.array(new_centroids)
+	
+	def fit(self,X):
+		"""
+		Fit the MeanShift clustering on the data
+
+		Parameters
+		----------
+		X : array-like, observations
+
+		"""
+		if self.__bandwidth == None:
+			self.__bandwidth = np.sqrt(np.sum(X.std(axis=0)**2))/X.shape[1]
+		new_centroids = { tuple(center) for center in X}
+		old_centroids = set()
+		while old_centroids!=new_centroids:
+			old_centroids = new_centroids
+			new_centroids = self.__get_new_centroids(X,old_centroids)
+		centroids = np.array([ list(centroid) for centroid in new_centroids ] )
+		self.__centroids = self.__mergeCentroids(centroids)
+		self.__labels = self.predict(X)
+		
+	def predict(self,X):
+		"""
+		Predict cluster labels for observations
+
+		Parameters
+		----------
+		X : array-like, observations
+		
+		Return
+		------
+		predicted cluster labels
+		
+		"""
+		dists = []
+		for row in X:
+			dists.append( self.__euclidean(self.__centroids,row) )
+		return np.argmin(dists,axis=1)
+	
+	def fit_predict(self,X):
+		"""
+		Fit the MeanShift algorithm on observations and predict cluster labels for them
+
+		Parameters
+		----------
+		X : array-like, observations
+		
+		Return
+		------
+		predicted cluster labels
+		
+		"""
+		self.fit(X)
+		return self.predict(X)
+	
+	@property
+	def labels_(self): return self.__labels
+	
+	@property
+	def cluster_centers_(self): return self.__centroids
+	
+	@property
+	def n_clusters_(self): return len(self.__centroids)

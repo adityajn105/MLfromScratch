@@ -13,8 +13,12 @@ class SGDClassifier():
 
     Parameters
     ----------
-    seed : integer, random seed
+    learning_rate = float, default 0.01, learning rate while updating weights
+
+    tol : float, default 0.01, stopping criteria
     
+    seed : integer, random seed
+
     normalize : boolean, normalize X in fit method
 
     Attributes
@@ -24,10 +28,12 @@ class SGDClassifier():
     intercept_ : integer, bias for the linear regression problem
 
     """
-    def __init__(self,seed=None,normalize=False):
+    def __init__(self, learning_rate=0.01, tol=0.01, seed=None, normalize=False):
         np.random.seed(seed if seed is not None else np.random.randint(100))
         self.W = None
         self.b = None
+        self.__lr = learning_rate
+        self.__tol = tol
         self.__length = None
         self.__normalize = normalize
         self.__m = None
@@ -45,16 +51,16 @@ class SGDClassifier():
         cost = np.sum(loss)/self.__m
         return cost
 
-    def __optimize(self,X,y,lr=None):
+    def __optimize(self,X,y):
         p = self.__sigmoid( np.dot(X,self.W)+self.b )
         dW = np.dot( X.T, (p-y) )/self.__m # (4,1)
         db = np.sum(p-y)/self.__m
-        self.W = self.W - lr*dW
-        self.b = self.b - lr*db
+        self.W = self.W - self.__lr*dW
+        self.b = self.b - self.__lr*db
     
     def __normalizeX(self,X): return (X-self.__mean) / (self.__std)
 
-    def fit(self, X, y, lr=0.01, tol=0.01, verbose=False):
+    def fit(self, X, y, verbose=False):
         """
         Fit X using y by optimizing weights and bias
         
@@ -63,10 +69,6 @@ class SGDClassifier():
         X : 2D numpy array, independent variables
 
         y : 1D numpy array, dependent variable
-        
-        lr : float, learning rate (Default 0.01)
-        
-        tol : float, tolerance as stopping criteria for gradient descent (Default : 0.01)
         
         verbose : boolean, print out details while optimizing (Default : False) 
        
@@ -81,8 +83,8 @@ class SGDClassifier():
             p = self.__sigmoid( np.dot(X,self.W)+self.b )
             cost = self.__computeCost(p,y)
             if verbose: print(f"Iteration: {i}, Cost: {cost:.3f}")
-            self.__optimize(X,y,lr=lr)
-            if last_cost-cost < tol: break
+            self.__optimize(X,y)
+            if last_cost-cost < self.__tol: break
             else: last_cost,i = cost,i+1
             self.__costs.append(cost)
             self.__iterations.append(i)

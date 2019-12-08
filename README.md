@@ -26,6 +26,9 @@ Here I tried to keep package modules in same structure as sklearn.
 6. ensemble
 	* 	RandomForestClassifier
 	* 	RandomForestRegressor
+	*	GradientBoostingRegressor
+	*	GradientBoostingClassifier
+	*	VotingClassifier
 7. metrics
 	* 	mean_squared_error
 	*	root_mean_squared_error

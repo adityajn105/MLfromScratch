@@ -11,14 +11,14 @@ def train_test_split(X,Y,test_size=None,seed=5):
 	indexes = np.random.choice([False,True],size=len(X),p=[test_size,1-test_size])
 	return X[indexes],X[~indexes],Y[indexes],Y[~indexes]
 
-def getRegData():
-	reg = pd.read_csv('data_regression.csv')
+def getRegData(path):
+	reg = pd.read_csv(path)
 	X = reg.drop('Y',axis=1).values
 	y = reg.Y.values
 	return train_test_split(X,y,test_size=0.3,seed=7)
 
-def getClassiData():
-	cls = pd.read_csv('data_classification.txt')
+def getClassiData(path):
+	cls = pd.read_csv(path)
 	X = cls.drop('Y',axis=1).values
 	y = cls.Y.values
 	return train_test_split(X,y,test_size=0.3,seed=7)

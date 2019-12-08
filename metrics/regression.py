@@ -68,7 +68,7 @@ def r2_score(y_true,y_pred):
 	"""
 	Compute Coefficient of Determinance, r2 score
 
-	r2 score = 1 - ESS/TSS = 1 - (y_true - y_pred)^2 / (y_true - y_true.mean())
+	r2 score = ESS/TSS = 1 - RSS/TSS = 1 - (y_true - y_pred)^2 / (y_true - y_true.mean())
 
 	Parameters
 	----------

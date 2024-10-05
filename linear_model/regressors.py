@@ -220,3 +220,116 @@ class LinearRegression():
 	
 	@property
 	def intercept_(self): return self.__bias
+
+class LogisticRegression():
+    """
+    An implementation of Logistic Regression
+    
+    Parameters
+    ----------
+    learning_rate : float, learning rate for gradient descent
+    iterations : int, number of iterations for gradient descent
+    normalize : boolean, normalize data using standardscaler before fitting
+    
+    Attributes
+    ----------
+    coef_ : coefficients for each of the features
+    intercept_ : y-intercept
+    """
+    def __init__(self, learning_rate=0.01, iterations=1000, normalize=False):
+        self.__learning_rate = learning_rate
+        self.__iterations = iterations
+        self.__normalize = normalize
+        self.__weights = None
+        self.__bias = None
+        self.__std = None
+        self.__mean = None
+    
+    def __sigmoid(self, z):
+        return 1 / (1 + np.exp(-z))
+    
+    def __normalizeX(self, X):
+        return (X - self.__mean) / self.__std
+    
+    def fit(self, X, y):
+        """
+        Fit X, y into the model
+        
+        Parameters
+        ----------
+        X : numpy array, array of independent variables
+        y : numpy array, dependent variable (binary)
+        """
+        if self.__normalize:
+            self.__mean, self.__std = X.mean(axis=0), X.std(axis=0)
+            X = self.__normalizeX(X)
+        
+        n_samples, n_features = X.shape
+        self.__weights = np.zeros(n_features)
+        self.__bias = 0
+        
+        for _ in range(self.__iterations):
+            linear_model = np.dot(X, self.__weights) + self.__bias
+            y_predicted = self.__sigmoid(linear_model)
+            
+            dw = (1 / n_samples) * np.dot(X.T, (y_predicted - y))
+            db = (1 / n_samples) * np.sum(y_predicted - y)
+            
+            self.__weights -= self.__learning_rate * dw
+            self.__bias -= self.__learning_rate * db
+    
+    def predict(self, X):
+        """
+        Predict dependent variable
+
+        Parameters
+        ----------
+        X : numpy array, independent variables
+
+        Returns
+        -------
+        predicted probabilities
+        """
+        if self.__normalize:
+            X = self.__normalizeX(X)
+        linear_model = np.dot(X, self.__weights) + self.__bias
+        return self.__sigmoid(linear_model)
+    
+    def predict_class(self, X, threshold=0.5):
+        """
+        Predict class labels
+
+        Parameters
+        ----------
+        X : numpy array, independent variables
+        threshold : float, threshold for class prediction
+
+        Returns
+        -------
+        predicted class labels (0 or 1)
+        """
+        return (self.predict(X) >= threshold).astype(int)
+    
+    def score(self, X, y):
+        """
+        Compute accuracy score
+
+        Parameters
+        ----------
+        X : 2D numpy array, independent variables
+        y : numpy array, dependent variables (binary)
+
+        Returns
+        -------
+        accuracy score
+        """
+        y_pred = self.predict_class(X)
+        return np.mean(y_pred == y)
+    
+    @property
+    def coef_(self):
+        return self.__weights
+    
+    @property
+    def intercept_(self):
+        return self.__bias
